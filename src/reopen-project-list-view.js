@@ -20,15 +20,17 @@ export default class ReopenProjectListView extends SelectListView {
 
   viewForItem (project) {
     let element = document.createElement('li')
-    if (project.name === this.currentProjectName)
+    if (project.name === this.currentProjectName) {
       element.classList.add('active')
+    }
     element.textContent = project.name
     return element
   }
 
   cancelled () {
-    if (this.panel != null)
+    if (this.panel != null) {
       this.panel.destroy()
+    }
     this.panel = null
     this.currentProjectName = null
   }
@@ -40,23 +42,23 @@ export default class ReopenProjectListView extends SelectListView {
 
   attach () {
     this.storeFocusedElement()
-    if (this.panel == null)
+    if (this.panel == null) {
       this.panel = atom.workspace.addModalPanel({item: this})
+    }
     this.focusFilterEditor()
   }
 
-  toggle() {
+  toggle () {
     if (this.panel != null) {
       this.cancel()
-    }
-    else {
+    } else {
       this.currentProjectName = atom.project != null ? this.makeName(atom.project.getPaths()) : null
       this.setItems(atom.history.getProjects().map(p => ({ name: this.makeName(p.paths), value: p.paths })))
       this.attach()
     }
   }
 
-  makeName(paths) {
+  makeName (paths) {
     return paths.join(', ')
   }
 }

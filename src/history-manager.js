@@ -1,6 +1,6 @@
 /** @babel */
 
-import {Emitter, Disposable, CompositeDisposable} from 'event-kit'
+import {Emitter} from 'event-kit'
 
 // Extended: History manager for remembering which projects have been opened.
 //
@@ -43,7 +43,7 @@ export class HistoryManager {
   }
 
   didChangeProjects (args) {
-    this.emitter.emit('did-change-projects', args || {reloaded:false})
+    this.emitter.emit('did-change-projects', args || { reloaded: false })
   }
 
   addProject (paths, lastOpened) {
@@ -61,9 +61,11 @@ export class HistoryManager {
 
   getProject (paths) {
     const pathsString = paths.toString()
-    for (var i = 0; i < this.projects.length; i++)
-      if (this.projects[i].paths.toString() === pathsString)
+    for (var i = 0; i < this.projects.length; i++) {
+      if (this.projects[i].paths.toString() === pathsString) {
         return this.projects[i]
+      }
+    }
 
     return null
   }
@@ -72,7 +74,7 @@ export class HistoryManager {
     const state = JSON.parse(this.localStorage.getItem('history'))
     if (state && state.projects) {
       this.projects = state.projects.filter(p => Array.isArray(p.paths) && p.paths.length > 0).map(p => new HistoryProject(p.paths, new Date(p.lastOpened)))
-      this.didChangeProjects({reloaded:true})
+      this.didChangeProjects({ reloaded: true })
     } else {
       this.projects = []
     }
@@ -88,8 +90,9 @@ export class HistoryManager {
   }
 
   async importProjectHistory () {
-    for(let project of await HistoryImporter.getAllProjects())
+    for (let project of await HistoryImporter.getAllProjects()) {
       this.addProject(project.paths, project.lastOpened)
+    }
     this.saveState()
     this.didChangeProjects()
   }
@@ -109,7 +112,7 @@ export class HistoryProject {
 }
 
 class HistoryImporter {
-  static async getStateStoreCursor() {
+  static async getStateStoreCursor () {
     const db = await atom.stateStore.dbPromise
     const store = db.transaction(['states']).objectStore('states')
     return store.openCursor()

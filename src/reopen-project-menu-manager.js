@@ -1,6 +1,6 @@
 /** @babel */
 
-import {Disposable, CompositeDisposable} from 'event-kit'
+import {CompositeDisposable} from 'event-kit'
 import path from 'path'
 
 export default class ReopenProjectMenuManager {
@@ -21,19 +21,21 @@ export default class ReopenProjectMenuManager {
     )
   }
 
-  reopenProjectCommand(e) {
-    if (e.detail != null && e.detail.index != null)
+  reopenProjectCommand (e) {
+    if (e.detail != null && e.detail.index != null) {
       this.open(this.projects[e.detail.index].paths)
-    else
+    } else {
       this.createReopenProjectListView()
+    }
   }
 
   createReopenProjectListView () {
     if (this.reopenProjectListView == null) {
       const ReopenProjectListView = require('./reopen-project-list-view')
-      this.reopenProjectListView = new ReopenProjectListView((paths) => {
-        if (paths != null)
+      this.reopenProjectListView = new ReopenProjectListView(paths => {
+        if (paths != null) {
           this.open(paths)
+        }
       })
     }
     this.reopenProjectListView.toggle()
@@ -42,15 +44,16 @@ export default class ReopenProjectMenuManager {
   update () {
     this.disposeProjectMenu()
     this.projects = this.historyManager.getProjects().slice(0, this.config.get('core.reopenProjectMenuCount'))
-    newMenu = ReopenProjectMenuManager.createProjectsMenu(this.projects)
+    const newMenu = ReopenProjectMenuManager.createProjectsMenu(this.projects)
     this.lastProjectMenu = this.menuManager.add([newMenu])
   }
 
   dispose () {
     this.subscriptions.dispose()
     this.disposeProjectMenu()
-    if (this.reopenProjectListView != null)
+    if (this.reopenProjectListView != null) {
       this.reopenProjectListView.dispose()
+    }
   }
 
   disposeProjectMenu () {
@@ -84,7 +87,7 @@ export default class ReopenProjectMenuManager {
 
   static betterBaseName (directory) {
     // Handles Windows roots better than path.basename which returns '' for 'd:' and 'd:\'
-    const match = directory.match(/^([a-z]\:)[\\]?$/i)
+    const match = directory.match(/^([a-z]:)[\\]?$/i)
     return match ? match[1] + '\\' : path.basename(directory)
   }
 }
